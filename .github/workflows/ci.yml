@@ -34,6 +34,7 @@ jobs:
       - uses: actions/checkout@v4
       - name: Install development kits
         run: |
+          chmod +x misc/gradle_pkg_version.sh
           NDK_VER=$(misc/gradle_pkg_version.sh ndkVersion app/app/build.gradle 1)
           BUILD_TOOLS_VER=$(misc/gradle_pkg_version.sh buildToolsVersion app/app/build.gradle 1)
           SDK_VER=$(misc/gradle_pkg_version.sh compileSdkVersion app/app/build.gradle)
