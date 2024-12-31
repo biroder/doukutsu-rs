@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/bash
 
 function get_len {
     echo $(echo $1 | wc -c)
