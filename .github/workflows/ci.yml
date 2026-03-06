@@ -56,15 +56,6 @@ jobs:
           echo "version=${{ env.VERSION }}-${GITHUB_SHA:0:7}" >> $GITHUB_OUTPUT
           echo "channel=nightly" >> $GITHUB_OUTPUT
 
-      - name: Restore cache
-        uses: actions/cache/restore@v4
-        with:
-          path: |
-            ~/.cargo
-            ~/.rustup
-            target
-          key: ${{ matrix.target_name }}-cargo
-
       - name: Setup rust toolchain
         run: |
           rustup default ${{ matrix.channel }}
@@ -72,10 +63,6 @@ jobs:
 
           rustc -vV
           cargo -vV
-
-          if [ "${{ runner.os }}" == "macOS" ]; then
-            cargo install cargo-bundle
-          fi
 
       - name: Build
         run: |
@@ -88,7 +75,7 @@ jobs:
 
           mkdir release
 
-          RUSTFLAGS="-C link-args=-s" CARGO_INCREMENTAL=1 cargo build -vvv --release --locked --bin doukutsu-rs --target ${{ matrix.target }}
+          RUSTFLAGS="-C link-args=-s" CARGO_INCREMENTAL=1 cargo build -vv --release --locked --bin doukutsu-rs --target ${{ matrix.target }}
           cp -a ./target/${{ matrix.target }}/release/doukutsu-rs release/doukutsu-rs.${{ matrix.arch_name }}.elf
 
       - name: Upload artifact
@@ -97,12 +84,3 @@ jobs:
           name: doukutsu-rs_${{ matrix.target_name }}
           path: ./release/*
           if-no-files-found: error
-
-      - name: Save cache
-        uses: actions/cache/save@v4
-        with:
-          path: |
-            ~/.cargo
-            ~/.rustup
-            target
-          key: ${{ matrix.target_name }}-cargo
